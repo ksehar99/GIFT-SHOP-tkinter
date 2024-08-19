@@ -3,7 +3,8 @@ from tkinter import messagebox
 from datetime import datetime
 import sys
 
-def Check_out():
+
+def Check_out(username):  # Pass the username as a parameter
     def read_cart_items():
         items = []
         try:
@@ -66,42 +67,64 @@ def Check_out():
                                   bg="#f8f9fa", fg="#007bff")  # Stylish font and color
         datetime_label.pack(pady=20)
 
-        # Create a frame for the checkout items
-        checkout_frame = tk.Frame(window, bg="#f8f9fa")
-        checkout_frame.pack(pady=10, padx=20, fill=tk.BOTH, expand=True)
+        # Create a frame for the items with a scrollbar
+        items_frame = tk.Frame(window, bg="#f8f9fa")
+        items_frame.pack(pady=10, padx=20, fill=tk.BOTH, expand=True)
 
-        # Read the cart items and display them in a simplified format
+        # Create a canvas and a scrollbar for the items
+        canvas = tk.Canvas(items_frame, bg="#f8f9fa")
+        scrollbar = tk.Scrollbar(items_frame, orient="vertical", command=canvas.yview)
+        scrollable_frame = tk.Frame(canvas, bg="#f8f9fa")
+
+        scrollable_frame.bind(
+            "<Configure>",
+            lambda e: canvas.configure(
+                scrollregion=canvas.bbox("all")
+            )
+        )
+
+        canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+        canvas.configure(yscrollcommand=scrollbar.set)
+
+        canvas.pack(side="left", fill="both", expand=True)
+        scrollbar.pack(side="right", fill="y")
+
+        # Read the cart items and display them in the scrollable frame
         cart_items = read_cart_items()
         if not cart_items:
-            empty_message = tk.Label(checkout_frame, text="Your cart is empty.", bg="#f8f9fa", font=("Arial", 14, "italic"))
+            empty_message = tk.Label(scrollable_frame, text="Your cart is empty.", bg="#f8f9fa", font=("Arial", 14, "italic"))
             empty_message.pack(pady=20)
         else:
             total_price = 0.0
             for item in cart_items:
-                item_label = tk.Label(checkout_frame, text=f"{item['name']} - Quantity: {item['quantity']} - Price: {item['unit_price']} - Total: {item['total_price']}",
+                item_label = tk.Label(scrollable_frame, text=f"{item['name']} - Quantity: {item['quantity']} - Price: {item['unit_price']} - Total: {item['total_price']}",
                                       bg="#f8f9fa", font=("Arial", 12))
                 item_label.pack(anchor='w', pady=5)
                 total_price += item['total_price']
 
-            payment_method_label = tk.Label(window, text="Payment Method: Cash on Delivery", font=("Arial", 14, "bold"), bg="#f8f9fa")
-            payment_method_label.pack(pady=10)
+        # Create a frame for the payment method, total, and confirm button outside the scrollbar
+        summary_frame = tk.Frame(window, bg="#f8f9fa")
+        summary_frame.pack(pady=20, padx=20, fill=tk.X)
 
-            # Label to display the total price
-            total_label = tk.Label(window, text=f"Total: Pkr {total_price}", font=("Arial", 16, "bold"), bg="#f8f9fa")
-            total_label.pack(pady=20)
+        payment_method_label = tk.Label(summary_frame, text="Payment Method: Cash on Delivery", font=("Arial", 14, "bold"), bg="#f8f9fa")
+        payment_method_label.pack(side=tk.LEFT, padx=10)
 
-            # Confirm purchase button
-            confirm_button = tk.Button(window, text="Confirm Purchase", command=lambda: confirm_purchase(cart_items, username, total_price),
-                                       bg="#28a745", fg="white", font=("Arial", 14, "bold"), relief="raised")
-            confirm_button.pack(pady=10)
+        # Label to display the total price
+        total_label = tk.Label(summary_frame, text=f"Total: Pkr {total_price}", font=("Arial", 16, "bold"), bg="#f8f9fa")
+        total_label.pack(side=tk.LEFT, padx=10)
+
+        # Confirm purchase button
+        confirm_button = tk.Button(summary_frame, text="Confirm Purchase", command=lambda: confirm_purchase(cart_items, username, total_price),
+                                   bg="#28a745", fg="white", font=("Arial", 14, "bold"), relief="raised")
+        confirm_button.pack(side=tk.RIGHT, padx=10)
 
         window.mainloop()
 
-    # Confirm the purchase and save details to a file
+    # Confirm the purchase and save details to a file named after the user
     def confirm_purchase(cart_items, username, total_price):
         try:
             current_datetime = datetime.now().strftime("%Y-%m-%d %H-%M-%S")
-            filename = f"{username}_{current_datetime}.txt"
+            filename = f"{username}.txt"  # File name based on the username
             with open(filename, 'a') as file:
                 file.write(f"Date & Time: {current_datetime}\n")
                 file.write(f"{'Item':<30}{'Quantity':<10}{'Unit Price':<15}{'Total Price':<15}\n")
@@ -144,6 +167,9 @@ def Check_out():
         thank_you_window.after(3000, safe_destroy)
         thank_you_window.mainloop()
 
-    # Call the show_checkout function with a username
-    username = "example_user"
+    # Call the show_checkout function with the username
     show_checkout(username)
+
+
+
+

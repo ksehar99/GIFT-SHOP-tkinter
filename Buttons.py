@@ -32,7 +32,7 @@ def more_menu_btns(username):
                 cart_window.geometry('400x600+150+50')
 
                 # Load the background image
-                background_image = Image.open('1.png')  # Replace with your image path
+                background_image = Image.open('1 (1).png')  # Replace with your image path
                 background_image = background_image.resize((400, 600))
                 background_image = ImageTk.PhotoImage(background_image)
 
@@ -98,7 +98,7 @@ def more_menu_btns(username):
                 back_button.pack(padx=50, pady=20, side='left')
 
                 # Add a button to proceed to checkout
-                proceed_button = tk.Button(cart_window, text="Checkout", width=11, command=lambda w=window: Check_out())
+                proceed_button = tk.Button(cart_window, text="Checkout", width=11, command=lambda w=window: Check_out(username))
                 proceed_button.pack(padx=50, pady=20, side='right')
 
 
@@ -122,6 +122,18 @@ def more_menu_btns(username):
 
         # Set the background color to a more attractive pink
         win.configure(bg="#FFC0CB")
+
+        try:
+            bg_image = Image.open(" ")  # Replace with your image file path
+            bg_image = bg_image.resize((600, 500), Image.ANTIALIAS)  # Resize to fit the window
+            bg_photo = ImageTk.PhotoImage(bg_image)
+        except Exception as e:
+            print(f"Error loading image: {e}")
+            bg_photo = None
+
+        # Create a label to hold the background image
+        bg_label = tk.Label(win, image=bg_photo)
+        bg_label.place(relwidth=1, relheight=1)
 
         # Create a frame to add the pink border
         border_frame = tk.Frame(win, bg="#FFC0CB", bd=5)

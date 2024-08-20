@@ -1,5 +1,4 @@
 from tkinter import Tk, Entry, Frame,PhotoImage, Label, Button, messagebox, Radiobutton, StringVar
-import tkinter as tk
 from update_user_info import update_info
 from PIL import Image, ImageTk
 from checkout import*
@@ -11,6 +10,7 @@ def back(window):
     from main import open_main_wind
 
     open_main_wind()
+
 
 def more_menu_btns(username):
     # Define functions for different actions
@@ -24,7 +24,7 @@ def more_menu_btns(username):
             file_empty= file.read().strip()
 
             if not file_empty:
-                tk.messagebox.showinfo("GiftBox", "Your cart is empty!")
+                tk.messagebox.showinfo("GiftShop", "Your cart is empty!")
             else:
                 # Create a new Tkinter window
                 cart_window = tk.Toplevel()
@@ -32,7 +32,7 @@ def more_menu_btns(username):
                 cart_window.geometry('400x600+150+50')
 
                 # Load the background image
-                background_image = Image.open('1 (1).png')  # Replace with your image path
+                background_image = Image.open('1.png')  # Replace with your image path
                 background_image = background_image.resize((400, 600))
                 background_image = ImageTk.PhotoImage(background_image)
 
@@ -105,11 +105,80 @@ def more_menu_btns(username):
                 # Ensure the scrollbar appears if needed
                 cart_window.update_idletasks()
 
-    # Function to view purchase history
-    def view_history():
-        print("View History")
+    def view_history(window):
+        # Open the user's order history file
+        try:
+            with open(f'{username}.txt', 'r') as file:
+                window.withdraw()
+                lines = file.readlines()
+                file.seek(0)
+                file_empty = file.read().strip()
 
-    # Function to display information about the company
+                if not file_empty:
+                    tk.messagebox.showinfo("GiftShop", "Your order history is empty!")
+                else:
+                    # Create a new Tkinter window
+                    history_window = tk.Toplevel()
+                    history_window.title('Order History')
+                    history_window.geometry('750x600+150+50')
+
+                    # Load the background image
+                    background_image = Image.open('1.png')  # Replace with your image path
+                    background_image = background_image.resize((800, 600))
+                    background_image = ImageTk.PhotoImage(background_image)
+
+                    # Create a label to display the background image
+                    background_label = tk.Label(history_window, image=background_image)
+                    background_label.image = background_image  # Keep a reference to avoid garbage collection
+                    background_label.place(x=0, y=0, relwidth=1, relheight=1)
+
+                    # Create a frame for the order history content with fixed dimensions
+                    history_frame = tk.Frame(history_window, width=380, height=350)
+                    history_frame.pack(expand=True, fill='both', padx=10, pady=10)
+
+                    # Create a canvas and scrollbar within the fixed dimensions
+                    canvas = tk.Canvas(history_frame, width=300, height=300)
+                    scrollbar = tk.Scrollbar(history_frame, orient="vertical", command=canvas.yview)
+                    scrollable_frame = tk.Frame(canvas)
+
+                    # Configure the scrollbar with the canvas
+                    scrollable_frame.bind(
+                        "<Configure>",
+                        lambda e: canvas.configure(
+                            scrollregion=canvas.bbox("all")
+                        )
+                    )
+
+                    canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
+                    canvas.configure(yscrollcommand=scrollbar.set)
+
+                    # Packing the canvas and scrollbar
+                    canvas.pack(side="left", fill="both", expand=True)
+                    scrollbar.pack(side="right", fill="y")
+
+                    # Add a title label
+                    title_label = tk.Label(scrollable_frame, text="Order History", font=('Times', 16, 'bold'))
+                    title_label.pack(pady=(0, 10), padx=130)
+
+                    # Read the order history file and display contents
+                    for line in lines:
+                        if line.strip():  # Skip empty lines
+                            # Create a label for each line, keeping the text aligned
+                            item_label = tk.Label(scrollable_frame, text=line.strip(), font=('Courier', 12), anchor='w',
+                                                  justify='left')
+                            item_label.pack(anchor='w', pady=2)
+
+                    # Function to handle the back button
+                    def back():
+                        history_window.destroy()
+                        window.deiconify()
+
+                    # Add a button to go back
+                    back_button = tk.Button(history_window, text="Back", width=8, command=back)
+                    back_button.pack(padx=50, pady=20)
+
+        except FileNotFoundError:
+            messagebox.showinfo('order history', 'You Haven\'t order yet!')
 
 
     def about_us():
@@ -152,6 +221,7 @@ def more_menu_btns(username):
 
         # Run the main loop to display the window
         cart_window.mainloop()
+
 
     # Function to log out from the current session
     def logout(menu):
@@ -256,4 +326,3 @@ def more_menu_btns(username):
 
     # Return the functions as a tuple along with the comment
     return view_cart, view_history, about_us, logout, update_credentials, delete_account
-

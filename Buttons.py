@@ -114,29 +114,22 @@ def more_menu_btns(username):
 
     def about_us():
         # Create a new Tkinter window
-        win = tk.Tk()
-        win.title("About Us")
+        cart_window = tk.Toplevel()
+        cart_window.title('About Us')
+        cart_window.geometry('500x500')
 
-        # Set the window size
-        win.geometry("600x500")
+        # Load and resize the background image
+        background_image = Image.open('wallpapersden.com_77118-500x500.jpg')  # Ensure the path is correct
+        background_image = background_image.resize((500, 500), Image.LANCZOS)
+        background_photo = ImageTk.PhotoImage(background_image)
 
-        # Set the background color to a more attractive pink
-        win.configure(bg="#FFC0CB")
-
-        try:
-            bg_image = Image.open(" ")  # Replace with your image file path
-            bg_image = bg_image.resize((600, 500), Image.ANTIALIAS)  # Resize to fit the window
-            bg_photo = ImageTk.PhotoImage(bg_image)
-        except Exception as e:
-            print(f"Error loading image: {e}")
-            bg_photo = None
-
-        # Create a label to hold the background image
-        bg_label = tk.Label(win, image=bg_photo)
-        bg_label.place(relwidth=1, relheight=1)
+        # Create a label to display the background image
+        background_label = tk.Label(cart_window, image=background_photo)
+        background_label.image = background_photo  # Keep a reference to avoid garbage collection
+        background_label.place(x=0, y=0, relwidth=1, relheight=1)
 
         # Create a frame to add the pink border
-        border_frame = tk.Frame(win, bg="#FFC0CB", bd=5)
+        border_frame = tk.Frame(cart_window, bg="#FFC0CB", bd=5)
         border_frame.place(relx=0.5, rely=0.5, anchor="center", relwidth=0.9, relheight=0.9)
 
         # Create another frame inside the border frame to hold content
@@ -154,11 +147,11 @@ def more_menu_btns(username):
             "Our platform is designed to help you find the perfect gifts for your loved ones, "
             "whether it’s for a birthday, anniversary, or just because. Explore our carefully curated "
             "collections to discover unique and thoughtful gifts that are sure to delight."
-        ), wraplength=500, justify="left", bg="#F5F5DC", fg="black", font=("Arial", 12))
+        ), wraplength=450, justify="left", bg="#F5F5DC", fg="black", font=("Arial", 12))
         description.pack(pady=10)
 
         # Run the main loop to display the window
-        win.mainloop()
+        cart_window.mainloop()
 
     # Function to log out from the current session
     def logout(menu):
@@ -263,3 +256,4 @@ def more_menu_btns(username):
 
     # Return the functions as a tuple along with the comment
     return view_cart, view_history, about_us, logout, update_credentials, delete_account
+

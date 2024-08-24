@@ -99,7 +99,7 @@ def prd_menu(username,window):
 
     view_cart, view_history, about_us, logout, update_credentials, delete_account = more_menu_btns(username)
 
-    more_menu.add_command(label="Order(s) History", command=view_history)
+    more_menu.add_command(label="Order(s) History", command=lambda w=menu : view_history(w))
     more_menu.add_command(label="About Us", command=about_us)
     more_menu.add_command(label="Logout", command=lambda m=menu : logout(m))
     more_menu.add_command(label="Update Account Info", command=lambda u=username, m=menu: update_info(u,m))

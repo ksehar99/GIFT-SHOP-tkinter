@@ -1,5 +1,5 @@
 # GIFT-SHOP-tkinter
-Python-based gift shop application built with Tkinter library. The application provides a user-friendly interface for browsing products, managing accounts, and processing purchases. The product menu is organized with tabs, and the checkout process is facilitated by a tree view, making it easy to manage and review purchases.
+Python-based gift shop application built with Tkinter library. The application provides a graphical user-friendly interface for browsing products, managing accounts, and processing purchases. The product menu is organized with tabs, and the checkout process is facilitated by a tree view, making it easy to manage and review purchases.
 
 ## Features
 - **Sign In and Sign Up:** Users can create a new account or sign in to an existing account to access personalized features such as     
